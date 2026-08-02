@@ -21,6 +21,27 @@
     </p>
 
     <p>
+    Due Date:
+    {{ $borrowing->due_date }}
+</p>
+
+@if(!$borrowing->returned_at && now()->gt($borrowing->due_date))
+    <p style="color:red;">
+        Overdue
+    </p>
+@endif
+
+@if(!$borrowing->returned_at && now()->gt($borrowing->due_date))
+
+<p style="color:red;">
+    Overdue by
+    {{ \Carbon\Carbon::parse($borrowing->due_date)->diffInDays(now()) }}
+    days
+</p>
+
+@endif
+
+    <p>
         Returned:
         {{ $borrowing->returned_at ?? 'Not Returned' }}
     </p>

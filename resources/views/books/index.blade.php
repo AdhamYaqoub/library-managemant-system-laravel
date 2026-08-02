@@ -1,5 +1,17 @@
 <h1>Library Books</h1>
 
+@if(session('success'))
+    <div style="color:green;">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div style="color:red;">
+        {{ session('error') }}
+    </div>
+@endif
+
 <a href="/books/create">Add New Book</a>
 <hr>
 

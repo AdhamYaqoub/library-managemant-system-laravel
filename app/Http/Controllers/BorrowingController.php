@@ -33,10 +33,11 @@ class BorrowingController extends Controller
         }
 
         Borrowing::create([
-            'book_id' => $request->book_id,
-            'member_id' => $request->member_id,
-            'borrowed_at' => now(),
-        ]);
+    'book_id' => $request->book_id,
+    'member_id' => $request->member_id,
+    'borrowed_at' => now(),
+    'due_date' => now()->addDays(14),
+]);
 
         $book->update([
             'is_available' => false

@@ -1,5 +1,19 @@
 <h1>Members</h1>
 
+
+@if(session('error'))
+    <p style="color:red;">
+        {{ session('error') }}
+    </p>
+@endif
+
+@if(session('success'))
+    <p style="color:green;">
+        {{ session('success') }}
+    </p>
+@endif
+
+
 <a href="/members/create">Add Member</a>
 
 @foreach($members as $member)

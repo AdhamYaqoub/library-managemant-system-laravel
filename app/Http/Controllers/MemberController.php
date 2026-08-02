@@ -49,9 +49,19 @@ class MemberController extends Controller
     }
 
     public function destroy(Member $member)
-    {
-        $member->delete();
+{
+    $hasBorrowedBooks = $member->borrowings()
+        ->whereNull('returned_at')
+        ->exists();
 
-        return redirect('/members');
+    if ($hasBorrowedBooks) {
+        return redirect('/members')
+            ->with('error', 'Cannot delete this member because they have borrowed books.');
     }
+
+    $member->delete();
+
+    return redirect('/members')
+        ->with('success', 'Member deleted successfully.');
+}
 }

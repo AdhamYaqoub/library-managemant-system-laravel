@@ -65,11 +65,21 @@ class BookController extends Controller
     }
 
     public function destroy(Book $book)
-    {
-        $book->delete();
+{
+    $isBorrowed = $book->borrowings()
+        ->whereNull('returned_at')
+        ->exists();
 
-        return redirect('/books');
+    if ($isBorrowed) {
+        return redirect('/books')
+            ->with('error', 'Cannot delete this book because it is currently borrowed.');
     }
+
+    $book->delete();
+
+    return redirect('/books')
+        ->with('success', 'Book deleted successfully.');
+}
 
     public function search(Request $request)
     {
