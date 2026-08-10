@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\BorrowingController;
 |--------------------------------------------------------------------------
 */
 
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
@@ -25,32 +26,85 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication
+    |--------------------------------------------------------------------------
+    */
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
 
-    Route::get('/books/statistics', [BookController::class, 'statistics']);
-    
-    // Books (everyone authenticated)
+    /*
+    |--------------------------------------------------------------------------
+    | Books - Authenticated Users
+    |--------------------------------------------------------------------------
+    */
+
     Route::apiResource('books', BookController::class)
-        ->except(['destroy']);
+        ->only(['index', 'show']);
 
 
-    // Delete book only for admin
-   Route::middleware('admin')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Member
+    |--------------------------------------------------------------------------
+    */
 
-    Route::delete('/books/{book}', [BookController::class, 'destroy']);
+    Route::middleware('member')->group(function () {
 
-    // restore book
-    Route::post('/books/{id}/restore', [BookController::class, 'restore']);
-});
+        Route::apiResource('borrowings', BorrowingController::class)
+            ->only(['store']);
+
+        Route::post(
+            '/borrowings/{id}/return',
+            [BorrowingController::class, 'returnBook']
+        );
+    });
 
 
-    // Members
-    Route::apiResource('members', MemberController::class);
+    /*
+    |--------------------------------------------------------------------------
+    | Admin
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('admin')->group(function () {
+
+        /*
+        | Books Management
+        */
+
+        Route::apiResource('books', BookController::class)
+            ->only(['store', 'update', 'destroy']);
+
+        Route::post(
+            '/books/{id}/restore',
+            [BookController::class, 'restore']
+        );
+
+        Route::get(
+            '/books/statistics',
+            [BookController::class, 'statistics']
+        );
 
 
-    // Borrowings
-    Route::apiResource('borrowings', BorrowingController::class);
+        /*
+        | Members Management
+        */
 
-    
+        Route::apiResource('members', MemberController::class);
+
+
+        /*
+        | Borrowings Management
+        */
+
+        Route::apiResource('borrowings', BorrowingController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
+
+
+        Route::get('/books/{id}/history', [BookController::class, 'history']);
+    });
+
 });

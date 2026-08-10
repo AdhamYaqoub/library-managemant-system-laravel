@@ -13,6 +13,8 @@ use App\Http\Resources\BookResource;
 use App\Services\BookService;
 
 use App\Traits\ApiResponse;
+use App\Models\Book;
+use Spatie\Activitylog\Models\Activity;
 
 class BookController extends Controller
 {
@@ -106,6 +108,20 @@ public function restore($id)
     return $this->success(
         new BookResource($book),
         'Book restored successfully.'
+    );
+}
+
+
+public function history($id)
+{
+    $history = Activity::where('subject_type', Book::class)
+        ->where('subject_id', $id)
+        ->latest()
+        ->get();
+
+    return $this->success(
+        $history,
+        'Book history retrieved successfully.'
     );
 }
 }

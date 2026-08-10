@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Member;
 
 class User extends Authenticatable
 {
@@ -33,6 +34,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function member()
+    {
+        return $this->hasOne(Member::class);
+    }
 
     /**
      * The attributes that should be cast.

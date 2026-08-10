@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use App\Traits\ApiResponse;
 
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
+use App\Models\Member;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
 class AuthController extends Controller
 {
     use ApiResponse;
@@ -42,4 +48,49 @@ class AuthController extends Controller
             'Logged out successfully.'
         );
     }
+
+
+    public function register(RegisterRequest $request)
+{
+    DB::beginTransaction();
+
+    try {
+
+        $data = $request->validated();
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 'member',
+        ]);
+
+        $member = Member::create([
+            'user_id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ]);
+
+        DB::commit();
+
+        return $this->success(
+            [
+                'user' => $user,
+                'member' => $member,
+            ],
+            'Member registered successfully.',
+            201
+        );
+
+    } catch (\Throwable $e) {
+
+        DB::rollBack();
+
+        \Log::error('Member registration failed.', [
+            'message' => $e->getMessage(),
+        ]);
+
+        throw $e;
+    }
+}
 }
