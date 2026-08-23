@@ -16,10 +16,22 @@ class BookService
         $this->bookRepository = $bookRepository;
     }
 
+    // public function getAll($request)
+    // {
+    //     return $this->bookRepository->getAll($request);
+    // }
     public function getAll($request)
-    {
-        return $this->bookRepository->getAll($request);
-    }
+{
+    return $this->bookRepository->getAll(
+        $request->only([
+            'search',
+            'category',
+            'order_by',
+            'direction',
+            'per_page',
+        ])
+    );
+}
 
     public function getById($id)
     {

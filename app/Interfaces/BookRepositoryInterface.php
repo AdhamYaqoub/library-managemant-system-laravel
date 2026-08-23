@@ -4,7 +4,7 @@ namespace App\Interfaces;
 
 interface BookRepositoryInterface
 {
-    public function getAll($request);
+    public function getAll(array $filters = []);
 
     public function getById($id);
 

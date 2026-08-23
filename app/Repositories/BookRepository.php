@@ -7,37 +7,47 @@ use App\Interfaces\BookRepositoryInterface;
 
 class BookRepository implements BookRepositoryInterface
 {
-    public function getAll($request)
+    public function getAll(array $filters = [])
     {
         $books = Book::query();
 
-        // Search by title or author
-        if ($request->filled('search')) {
-            $search = $request->search;
-
-            $books->where(function ($query) use ($search) {
-                $query->where('title', 'like', "%{$search}%")
-                      ->orWhere('author', 'like', "%{$search}%");
+        if (!empty($filters['search'])) {
+            $books->where(function ($query) use ($filters) {
+                $query->where('title', 'like', '%' . $filters['search'] . '%')
+                      ->orWhere('author', 'like', '%' . $filters['search'] . '%')
+                      ->orWhere('category', 'like', '%' . $filters['search'] . '%');
             });
         }
 
-        // Filter by category
-        if ($request->filled('category')) {
-            $books->where('category', $request->category);
+        if (!empty($filters['category'])) {
+            $books->where('category', $filters['category']);
         }
 
-        // Filter by availability
-        if ($request->filled('is_available')) {
-            $books->where('is_available', $request->is_available);
+        if (!empty($filters['order_by'])) {
+            $allowedColumns = [
+                'title',
+                'author',
+                'category',
+                'publish_year',
+            ];
+
+            if (in_array($filters['order_by'], $allowedColumns)) {
+                $direction = $filters['direction'] ?? 'asc';
+
+                if (!in_array($direction, ['asc', 'desc'])) {
+                    $direction = 'asc';
+                }
+
+                $books->orderBy(
+                    $filters['order_by'],
+                    $direction
+                );
+            }
         }
 
-        // Sorting
-        $books->orderBy(
-            $request->get('sort', 'id'),
-            $request->get('direction', 'asc')
+        return $books->paginate(
+            $filters['per_page'] ?? 10
         );
-
-        return $books->paginate(10);
     }
 
     public function getById($id)
@@ -47,8 +57,6 @@ class BookRepository implements BookRepositoryInterface
 
     public function store(array $data)
     {
-        $data['is_available'] = true;
-
         return Book::create($data);
     }
 
@@ -58,33 +66,39 @@ class BookRepository implements BookRepositoryInterface
 
         $book->update($data);
 
-        return $book;
+        return $book->fresh();
     }
 
     public function destroy($id)
     {
         $book = Book::findOrFail($id);
 
-        $book->delete();
-
-        return true;
+        return $book->delete();
     }
 
     public function restore($id)
-{
-    $book = Book::withTrashed()->findOrFail($id);
+    {
+        $book = Book::withTrashed()->findOrFail($id);
 
-    $book->restore();
+        $book->restore();
 
-    return $book;
-}
+        return $book->fresh();
+    }
 
-public function statistics()
-{
-    return [
-        'total_books' => Book::count(),
-        'available_books' => Book::where('is_available', true)->count(),
-        'borrowed_books' => Book::where('is_available', false)->count(),
-    ];
-}
+    public function statistics()
+    {
+        return [
+            'total_books' => Book::count(),
+
+            'available_books' => Book::where(
+                'is_available',
+                true
+            )->count(),
+
+            'borrowed_books' => Book::where(
+                'is_available',
+                false
+            )->count(),
+        ];
+    }
 }

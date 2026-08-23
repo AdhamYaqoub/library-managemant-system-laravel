@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\BorrowingController;
-
+use App\Http\Controllers\Api\AiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,4 +107,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/books/{id}/history', [BookController::class, 'history']);
     });
 
+    Route::post('/ai/chat', [AiController::class, 'chat']);
+
+
+    Route::get('/php-info', function () {
+    return [
+        'max_execution_time' => ini_get('max_execution_time'),
+        'loaded_ini' => php_ini_loaded_file(),
+        'php_version' => PHP_VERSION,
+    ];
+});
 });
