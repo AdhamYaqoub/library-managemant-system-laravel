@@ -10,7 +10,7 @@ trait ApiResponse
             'success' => true,
             'message' => $message,
             'data' => $data,
-        ], $status);
+        ], $status, [], JSON_UNESCAPED_UNICODE);
     }
 
     protected function error($message = 'Error', $status = 400, $errors = null)
@@ -19,6 +19,6 @@ trait ApiResponse
             'success' => false,
             'message' => $message,
             'errors' => $errors,
-        ], $status);
+        ], $status, [], JSON_UNESCAPED_UNICODE);
     }
 }
