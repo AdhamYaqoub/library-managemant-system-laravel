@@ -22,14 +22,14 @@ class BookHistoryTool
                     'type' => 'object',
 
                     'properties' => [
-                        'book_id' => [
+                        'id' => [
                             'type' => 'integer',
                             'description' => 'The book ID.',
                         ],
                     ],
 
                     'required' => [
-                        'book_id',
+                        'id',
                     ],
                 ],
             ],
@@ -39,7 +39,7 @@ class BookHistoryTool
     public function execute(array $arguments): array
     {
         $book = Book::findOrFail(
-            $arguments['book_id']
+            $arguments['id']
         );
 
         return Activity::query()

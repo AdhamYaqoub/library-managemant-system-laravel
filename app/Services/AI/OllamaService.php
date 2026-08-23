@@ -20,11 +20,15 @@ class OllamaService
 
     public function chat(array $messages, bool $json = false): array
     {
-        $payload = [
-            'model' => $this->model,
-            'messages' => $messages,
-            'stream' => false,
-        ];
+       $payload = [
+    'model' => $this->model,
+    'messages' => $messages,
+    'stream' => false,
+    'think' => false,
+    'options' => [
+    'num_predict' => 256,
+],
+];
 
         if ($json) {
             $payload['format'] = 'json';

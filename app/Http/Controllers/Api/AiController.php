@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AiChatRequest;
 use App\Services\AI\LibraryAgentService;
 use App\Traits\ApiResponse;
-use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class AiController extends Controller
 {
@@ -18,13 +18,18 @@ class AiController extends Controller
     }
 
     public function chat(AiChatRequest $request)
-    {    set_time_limit(300);
+    {
+        set_time_limit(300);
 
         try {
 
-            $answer = $this->agent->chat(
-                $request->validated('message')
-            );
+            $message = $request->validated('message');
+
+            Log::info('AI ORIGINAL MESSAGE', [
+                'message' => $message,
+            ]);
+
+            $answer = $this->agent->chat($message);
 
             return $this->success(
                 [
@@ -33,22 +38,21 @@ class AiController extends Controller
                 'AI response generated successfully.'
             );
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
 
-    \Log::error('AI Agent Error', [
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString(),
-    ]);
+            Log::error('AI Agent Error', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
 
-    return $this->error(
-        'Unable to process AI request.',
-        500,
-        [
-            'error' => $e->getMessage(),
-        ]
-    );
-}
+            return $this->error(
+                'Unable to process AI request.',
+                500,
+                [
+                    'error' => $e->getMessage(),
+                ]
+            );
+        }
     }
 }
