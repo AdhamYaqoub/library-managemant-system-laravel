@@ -32,5 +32,5 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /et
 RUN sed -i '/<Directory \\/var\\/www\\/>/,/<\\/Directory>/ s|AllowOverride None|AllowOverride All|' /etc/apache2/apache2.conf
 
 EXPOSE 80
-س
+
 CMD ["apache2-foreground"]
