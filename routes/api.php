@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 /*
 |--------------------------------------------------------------------------
 | Protected Routes
@@ -31,6 +34,58 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Books - Admin
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('admin')->group(function () {
+
+        /*
+        | Books Statistics
+        */
+
+        Route::get(
+            '/books/statistics',
+            [BookController::class, 'statistics']
+        );
+
+        /*
+        | Books Management
+        */
+
+        Route::apiResource('books', BookController::class)
+            ->only(['store', 'update', 'destroy']);
+
+        Route::post(
+            '/books/{id}/restore',
+            [BookController::class, 'restore']
+        );
+
+        /*
+        | Members Management
+        */
+
+        Route::apiResource('members', MemberController::class);
+
+        /*
+        | Borrowings Management
+        */
+
+        Route::apiResource('borrowings', BorrowingController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
+
+        /*
+        | Book Borrowing History
+        */
+
+        Route::get(
+            '/books/{id}/history',
+            [BookController::class, 'history']
+        );
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -60,46 +115,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Admin
+    | AI
     |--------------------------------------------------------------------------
     */
 
-    Route::middleware('admin')->group(function () {
-
-        /*
-        | Books Management
-        */
-
-        Route::apiResource('books', BookController::class)
-            ->only(['store', 'update', 'destroy']);
-
-        Route::post(
-            '/books/{id}/restore',
-            [BookController::class, 'restore']
-        );
-
-        Route::get(
-            '/books/statistics',
-            [BookController::class, 'statistics']
-        );
-
-        /*
-        | Members Management
-        */
-
-        Route::apiResource('members', MemberController::class);
-
-        /*
-        | Borrowings Management
-        */
-
-        Route::apiResource('borrowings', BorrowingController::class)
-            ->only(['index', 'show', 'update', 'destroy']);
-
-        Route::get('/books/{id}/history', [BookController::class, 'history']);
-    });
-
     Route::post('/ai/chat', [AiController::class, 'chat']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PHP Info
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/php-info', function () {
         return [
@@ -109,6 +135,3 @@ Route::middleware('auth:sanctum')->group(function () {
         ];
     });
 });
-
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-Route::post('/reset-password', [AuthController::class, 'resetPassword']);
