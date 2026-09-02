@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-
 use App\Http\Resources\BookResource;
-
-use App\Services\BookService;
-
-use App\Traits\ApiResponse;
 use App\Models\Book;
+use App\Services\BookService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 
 class BookController extends Controller
@@ -21,107 +17,93 @@ class BookController extends Controller
     use ApiResponse;
 
     public function index(Request $request)
-{
-    $books = $this->bookService->getAll($request);
+    {
+        $books = $this->bookService->getAll($request);
 
-return $this->success(
-    BookResource::collection($books),
-    'Books retrieved successfully.'
-);}
+        return $this->success(
+            BookResource::collection($books),
+            'Books retrieved successfully.'
+        );
+    }
 
-   
+    public function store(StoreBookRequest $request)
+    {
+        $book = $this->bookService->store($request->validated());
 
-  public function store(StoreBookRequest $request)
-{
-    $book = $this->bookService->store($request->validated());
-
-    return $this->success(
-    new BookResource($book),
-    'Book created successfully.',
-    201
-);
-}
-
-  
+        return $this->success(
+            new BookResource($book),
+            'Book created successfully.',
+            201
+        );
+    }
 
     public function update(UpdateBookRequest $request, $id)
-{
-    $book = $this->bookService->update($id, $request->validated());
+    {
+        $book = $this->bookService->update($id, $request->validated());
 
-   return $this->success(
-    new BookResource($book),
-    'Book updated successfully.'
-);
-}
+        return $this->success(
+            new BookResource($book),
+            'Book updated successfully.'
+        );
+    }
 
-    
-public function destroy($id)
-{
-    $this->bookService->destroy($id);
+    public function destroy($id)
+    {
+        $this->bookService->destroy($id);
 
-   return $this->success(
-    null,
-    'Book deleted successfully.'
-);
-}
+        return $this->success(
+            null,
+            'Book deleted successfully.'
+        );
+    }
 
-    
+    public function statistics()
+    {
+        $statistics = $this->bookService->statistics();
 
-  
+        return $this->success(
+            $statistics,
+            'Statistics retrieved successfully.'
+        );
+    }
 
-   
+    public function show($id)
+    {
+        $book = $this->bookService->getById($id);
 
-    
+        return $this->success(
+            new BookResource($book),
+            'Book retrieved successfully.'
+        );
+    }
 
- public function statistics()
-{
-    $statistics = $this->bookService->statistics();
+    protected BookService $bookService;
 
-    return $this->success(
-        $statistics,
-        'Statistics retrieved successfully.'
-    );
-}
+    public function __construct(BookService $bookService)
+    {
+        $this->bookService = $bookService;
+    }
 
-public function show($id)
-{
-    $book = $this->bookService->getById($id);
+    public function restore($id)
+    {
+        $book = $this->bookService->restore($id);
 
-    return $this->success(
-        new BookResource($book),
-        'Book retrieved successfully.'
-    );
-}
+        return $this->success(
+            new BookResource($book),
+            'Book restored successfully.'
+        );
+    }
 
+    public function history($id)
+    {
+        $history = Activity::where('subject_type', Book::class)
+            ->where('subject_id', $id)
+            ->latest()
+            ->get();
 
-protected BookService $bookService;
-
-public function __construct(BookService $bookService)
-{
-    $this->bookService = $bookService;
-}
-
-public function restore($id)
-{
-    $book = $this->bookService->restore($id);
-
-    return $this->success(
-        new BookResource($book),
-        'Book restored successfully.'
-    );
-}
-
-
-public function history($id)
-{
-    $history = Activity::where('subject_type', Book::class)
-        ->where('subject_id', $id)
-        ->latest()
-        ->get();
-
-    return $this->success(
-        $history,
-        'Book history retrieved successfully.'
-    );
-}
+        return $this->success(
+            $history,
+            'Book history retrieved successfully.'
+        );
+    }
 }

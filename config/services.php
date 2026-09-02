@@ -32,9 +32,9 @@ return [
     ],
 
     'ollama' => [
-    'url' => env('OLLAMA_URL', 'http://localhost:11434'),
-    'model' => env('OLLAMA_MODEL', 'qwen3'),
-    'timeout' => env('OLLAMA_TIMEOUT', 120),
-],
+        'url' => env('OLLAMA_URL', 'http://localhost:11434'),
+        'model' => env('OLLAMA_MODEL', 'qwen3'),
+        'timeout' => env('OLLAMA_TIMEOUT', 120),
+    ],
 
 ];

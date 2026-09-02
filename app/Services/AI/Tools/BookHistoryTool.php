@@ -15,8 +15,7 @@ class BookHistoryTool
             'function' => [
                 'name' => 'get_book_history',
 
-                'description' =>
-                    'Get the activity history of a book.',
+                'description' => 'Get the activity history of a book.',
 
                 'parameters' => [
                     'type' => 'object',

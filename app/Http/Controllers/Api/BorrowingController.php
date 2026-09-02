@@ -3,18 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Traits\ApiResponse;
-
-use App\Services\BorrowingService;
-
 use App\Http\Requests\StoreBorrowingRequest;
 use App\Http\Requests\UpdateBorrowingRequest;
-
 use App\Http\Resources\BorrowingResource;
-
-use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Borrowing;
+use App\Services\BorrowingService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class BorrowingController extends Controller
 {
@@ -48,46 +44,46 @@ class BorrowingController extends Controller
     }
 
     public function store(StoreBorrowingRequest $request)
-{
-    $data = $request->validated();
+    {
+        $data = $request->validated();
 
-    $user = $request->user();
+        $user = $request->user();
 
-    $member = $user->member;
+        $member = $user->member;
 
-    if (!$member) {
-        return $this->error(
-            'Member profile not found.',
-            404
+        if (! $member) {
+            return $this->error(
+                'Member profile not found.',
+                404
+            );
+        }
+
+        $book = Book::findOrFail($data['book_id']);
+
+        if (! $book->is_available) {
+            return $this->error(
+                'Book is not available.',
+                422
+            );
+        }
+
+        $borrowing = Borrowing::create([
+            'book_id' => $book->id,
+            'member_id' => $member->id,
+            'borrowed_at' => now(),
+            'due_date' => now()->addDays(14),
+        ]);
+
+        $book->update([
+            'is_available' => false,
+        ]);
+
+        return $this->success(
+            new BorrowingResource($borrowing),
+            'Book borrowed successfully.',
+            201
         );
     }
-
-    $book = Book::findOrFail($data['book_id']);
-
-    if (!$book->is_available) {
-        return $this->error(
-            'Book is not available.',
-            422
-        );
-    }
-
-    $borrowing = Borrowing::create([
-        'book_id'     => $book->id,
-        'member_id'   => $member->id,
-        'borrowed_at' => now(),
-        'due_date'    => now()->addDays(14),
-    ]);
-
-    $book->update([
-        'is_available' => false,
-    ]);
-
-    return $this->success(
-        new BorrowingResource($borrowing),
-        'Book borrowed successfully.',
-        201
-    );
-}
 
     public function update(UpdateBorrowingRequest $request, $id)
     {

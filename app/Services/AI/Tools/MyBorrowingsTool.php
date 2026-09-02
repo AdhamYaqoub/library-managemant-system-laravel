@@ -14,8 +14,7 @@ class MyBorrowingsTool
             'function' => [
                 'name' => 'get_my_borrowings',
 
-                'description' =>
-                    'Get the current authenticated member borrowings.',
+                'description' => 'Get the current authenticated member borrowings.',
 
                 'parameters' => [
                     'type' => 'object',
@@ -31,7 +30,7 @@ class MyBorrowingsTool
 
         $member = $user->member;
 
-        if (!$member) {
+        if (! $member) {
             return [];
         }
 

@@ -13,7 +13,7 @@ class MemberMiddleware
 
             return response()->json([
                 'success' => false,
-                'message' => 'Access denied.'
+                'message' => 'Access denied.',
             ], 403);
         }
 

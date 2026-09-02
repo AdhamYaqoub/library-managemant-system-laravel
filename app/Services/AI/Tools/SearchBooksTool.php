@@ -22,16 +22,16 @@ class SearchBooksTool
                     'like',
                     "%{$search}%"
                 )
-                ->orWhere(
-                    'author',
-                    'like',
-                    "%{$search}%"
-                )
-                ->orWhere(
-                    'category',
-                    'like',
-                    "%{$search}%"
-                );
+                    ->orWhere(
+                        'author',
+                        'like',
+                        "%{$search}%"
+                    )
+                    ->orWhere(
+                        'category',
+                        'like',
+                        "%{$search}%"
+                    );
 
             })
             ->get([

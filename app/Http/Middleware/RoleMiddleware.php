@@ -13,8 +13,8 @@ class RoleMiddleware
         Closure $next,
         string $role
     ): Response {
-        
-        if (!$request->user()) {
+
+        if (! $request->user()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthenticated.',

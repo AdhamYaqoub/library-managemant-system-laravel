@@ -19,11 +19,11 @@ class UpdateMemberRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-   public function rules(): array
-{
-    return [
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:members,email,' . $this->route('member'),
-    ];
-}
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:members,email,'.$this->route('member'),
+        ];
+    }
 }

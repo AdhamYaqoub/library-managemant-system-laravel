@@ -2,11 +2,11 @@
 
 namespace App\Services\AI;
 
-use App\Services\AI\Tools\SearchBooksTool;
 use App\Services\AI\Tools\AvailableBooksTool;
-use App\Services\AI\Tools\GetBookTool;
 use App\Services\AI\Tools\BookHistoryTool;
+use App\Services\AI\Tools\GetBookTool;
 use App\Services\AI\Tools\MyBorrowingsTool;
+use App\Services\AI\Tools\SearchBooksTool;
 use Illuminate\Support\Facades\Log;
 
 class LibraryAgentService
@@ -18,8 +18,7 @@ class LibraryAgentService
         protected GetBookTool $getBookTool,
         protected BookHistoryTool $bookHistoryTool,
         protected MyBorrowingsTool $myBorrowingsTool,
-    ) {
-    }
+    ) {}
 
     public function chat(string $message): string
     {
@@ -34,7 +33,7 @@ class LibraryAgentService
             $messages = [
                 [
                     'role' => 'system',
-                    'content' => <<<PROMPT
+                    'content' => <<<'PROMPT'
 You are a Library Management AI Agent.
 
 Your job is to understand the user's request and select ONE action.
@@ -132,7 +131,7 @@ PROMPT
 
             $content = $response['message']['content'] ?? null;
 
-            if (!$content) {
+            if (! $content) {
                 throw new \Exception(
                     'Ollama returned an empty response.'
                 );
@@ -155,8 +154,8 @@ PROMPT
             );
 
             if (
-                !is_array($intent) ||
-                !isset($intent['action'])
+                ! is_array($intent) ||
+                ! isset($intent['action'])
             ) {
                 throw new \Exception(
                     'Invalid JSON returned by Ollama.'
@@ -167,7 +166,7 @@ PROMPT
 
             $arguments = $intent['arguments'] ?? [];
 
-            if (!is_array($arguments)) {
+            if (! is_array($arguments)) {
                 $arguments = [];
             }
 
@@ -232,30 +231,25 @@ PROMPT
 
         return match ($action) {
 
-            'search_books' =>
-                $this->searchBooksTool
-                    ->execute($arguments),
+            'search_books' => $this->searchBooksTool
+                ->execute($arguments),
 
-            'get_available_books' =>
-                $this->availableBooksTool
-                    ->execute(),
+            'get_available_books' => $this->availableBooksTool
+                ->execute(),
 
-            'get_book' =>
-                $this->getBookTool
-                    ->execute($arguments),
+            'get_book' => $this->getBookTool
+                ->execute($arguments),
 
-            'get_book_history' =>
-                $this->bookHistoryTool
-                    ->execute($arguments),
+            'get_book_history' => $this->bookHistoryTool
+                ->execute($arguments),
 
-            'get_my_borrowings' =>
-                $this->myBorrowingsTool
-                    ->execute(),
+            'get_my_borrowings' => $this->myBorrowingsTool
+                ->execute(),
 
             'none' => [],
 
             default => [
-                'error' => 'Unknown action.'
+                'error' => 'Unknown action.',
             ],
         };
     }
@@ -268,7 +262,7 @@ PROMPT
         $messages = [
             [
                 'role' => 'system',
-                'content' => <<<PROMPT
+                'content' => <<<'PROMPT'
 You are a Library Management AI Assistant.
 
 Your task is to answer the user's question using ONLY the database result provided by the system.
@@ -318,7 +312,7 @@ PROMPT
             ],
             [
                 'role' => 'system',
-                'content' => 'Database result: ' . json_encode(
+                'content' => 'Database result: '.json_encode(
                     $data,
                     JSON_UNESCAPED_UNICODE
                 ),

@@ -26,17 +26,13 @@ class AiChatRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'message.required' =>
-                'Message is required.',
+            'message.required' => 'Message is required.',
 
-            'message.string' =>
-                'Message must be a string.',
+            'message.string' => 'Message must be a string.',
 
-            'message.min' =>
-                'Message must contain at least 2 characters.',
+            'message.min' => 'Message must contain at least 2 characters.',
 
-            'message.max' =>
-                'Message cannot exceed 2000 characters.',
+            'message.max' => 'Message cannot exceed 2000 characters.',
         ];
     }
 }

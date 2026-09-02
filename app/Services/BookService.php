@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Interfaces\BookRepositoryInterface;
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,17 +20,17 @@ class BookService
     //     return $this->bookRepository->getAll($request);
     // }
     public function getAll($request)
-{
-    return $this->bookRepository->getAll(
-        $request->only([
-            'search',
-            'category',
-            'order_by',
-            'direction',
-            'per_page',
-        ])
-    );
-}
+    {
+        return $this->bookRepository->getAll(
+            $request->only([
+                'search',
+                'category',
+                'order_by',
+                'direction',
+                'per_page',
+            ])
+        );
+    }
 
     public function getById($id)
     {
@@ -39,120 +38,119 @@ class BookService
     }
 
     public function store(array $data)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $book = $this->bookRepository->store($data);
+            $book = $this->bookRepository->store($data);
 
-        DB::commit();
+            DB::commit();
 
-        Log::info('Book created successfully.', [
-            'book_id' => $book->id,
-            'title' => $book->title,
-        ]);
+            Log::info('Book created successfully.', [
+                'book_id' => $book->id,
+                'title' => $book->title,
+            ]);
 
-        return $book;
+            return $book;
 
-    } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        Log::error('Failed to create book.', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
+            Log::error('Failed to create book.', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 
     public function update($id, array $data)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $book = $this->bookRepository->update($id, $data);
+            $book = $this->bookRepository->update($id, $data);
 
-        DB::commit();
+            DB::commit();
 
-        Log::info('Book updated.', [
-            'book_id' => $book->id,
-        ]);
+            Log::info('Book updated.', [
+                'book_id' => $book->id,
+            ]);
 
-        return $book;
+            return $book;
 
-    } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        Log::error('Failed to update book.', [
-            'message' => $e->getMessage(),
-        ]);
+            Log::error('Failed to update book.', [
+                'message' => $e->getMessage(),
+            ]);
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 
     public function destroy($id)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $this->bookRepository->destroy($id);
+            $this->bookRepository->destroy($id);
 
-        DB::commit();
+            DB::commit();
 
-        Log::info('Book deleted.', [
-            'book_id' => $id,
-        ]);
+            Log::info('Book deleted.', [
+                'book_id' => $id,
+            ]);
 
-    } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        Log::error('Failed to delete book.', [
-            'message' => $e->getMessage(),
-        ]);
+            Log::error('Failed to delete book.', [
+                'message' => $e->getMessage(),
+            ]);
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 
+    public function restore($id)
+    {
+        DB::beginTransaction();
 
-public function restore($id)
-{
-    DB::beginTransaction();
+        try {
 
-    try {
+            $book = $this->bookRepository->restore($id);
 
-        $book = $this->bookRepository->restore($id);
+            DB::commit();
 
-        DB::commit();
+            Log::info('Book restored.', [
+                'book_id' => $book->id,
+            ]);
 
-        Log::info('Book restored.', [
-            'book_id' => $book->id,
-        ]);
+            return $book;
 
-        return $book;
+        } catch (\Throwable $e) {
 
-    } catch (\Throwable $e) {
+            DB::rollBack();
 
-        DB::rollBack();
+            Log::error('Failed to restore book.', [
+                'message' => $e->getMessage(),
+            ]);
 
-        Log::error('Failed to restore book.', [
-            'message' => $e->getMessage(),
-        ]);
-
-        throw $e;
+            throw $e;
+        }
     }
-}
 
-public function statistics()
-{
-    return $this->bookRepository->statistics();
-}
+    public function statistics()
+    {
+        return $this->bookRepository->statistics();
+    }
 }

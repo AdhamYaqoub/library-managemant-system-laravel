@@ -24,15 +24,15 @@ class BorrowingRepository implements BorrowingRepositoryInterface
     {
         $book = Book::findOrFail($data['book_id']);
 
-        if (!$book->is_available) {
+        if (! $book->is_available) {
             throw new \Exception('Book is not available.');
         }
 
         $borrowing = Borrowing::create([
-            'book_id'     => $data['book_id'],
-            'member_id'   => $data['member_id'],
+            'book_id' => $data['book_id'],
+            'member_id' => $data['member_id'],
             'borrowed_at' => now(),
-            'due_date'    => now()->addDays(14),
+            'due_date' => now()->addDays(14),
         ]);
 
         $book->update([

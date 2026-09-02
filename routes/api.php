@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
-use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\BorrowingController;
-use App\Http\Controllers\Api\AiController;
+use App\Http\Controllers\Api\MemberController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +15,6 @@ use App\Http\Controllers\Api\AiController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
-
     /*
     |--------------------------------------------------------------------------
     | Books - Authenticated Users
@@ -43,7 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('books', BookController::class)
         ->only(['index', 'show']);
-
 
     /*
     |--------------------------------------------------------------------------
@@ -61,7 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
             [BorrowingController::class, 'returnBook']
         );
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -88,13 +83,11 @@ Route::middleware('auth:sanctum')->group(function () {
             [BookController::class, 'statistics']
         );
 
-
         /*
         | Members Management
         */
 
         Route::apiResource('members', MemberController::class);
-
 
         /*
         | Borrowings Management
@@ -103,18 +96,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('borrowings', BorrowingController::class)
             ->only(['index', 'show', 'update', 'destroy']);
 
-
         Route::get('/books/{id}/history', [BookController::class, 'history']);
     });
 
     Route::post('/ai/chat', [AiController::class, 'chat']);
 
-
     Route::get('/php-info', function () {
-    return [
-        'max_execution_time' => ini_get('max_execution_time'),
-        'loaded_ini' => php_ini_loaded_file(),
-        'php_version' => PHP_VERSION,
-    ];
-});
+        return [
+            'max_execution_time' => ini_get('max_execution_time'),
+            'loaded_ini' => php_ini_loaded_file(),
+            'php_version' => PHP_VERSION,
+        ];
+    });
 });

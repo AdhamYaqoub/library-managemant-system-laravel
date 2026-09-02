@@ -12,21 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('borrowings', function (Blueprint $table) {
-    $table->id();
+            $table->id();
 
-    $table->foreignId('book_id')
-          ->constrained()
-          ->onDelete('cascade');
+            $table->foreignId('book_id')
+                ->constrained()
+                ->onDelete('cascade');
 
-    $table->foreignId('member_id')
-          ->constrained()
-          ->onDelete('cascade');
+            $table->foreignId('member_id')
+                ->constrained()
+                ->onDelete('cascade');
 
-    $table->dateTime('borrowed_at');
-    $table->dateTime('returned_at')->nullable();
+            $table->dateTime('borrowed_at');
+            $table->dateTime('returned_at')->nullable();
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**

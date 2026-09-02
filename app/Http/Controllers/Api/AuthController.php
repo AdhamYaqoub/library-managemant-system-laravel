@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\Member;
+use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-use App\Http\Requests\LoginRequest;
-use App\Traits\ApiResponse;
-
-use App\Http\Requests\RegisterRequest;
-use App\Models\User;
-use App\Models\Member;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -34,7 +32,7 @@ class AuthController extends Controller
         $token = $user->createToken('library-api')->plainTextToken;
 
         return $this->success([
-            'user'  => $user,
+            'user' => $user,
             'token' => $token,
         ], 'Login successful.');
     }
@@ -49,48 +47,47 @@ class AuthController extends Controller
         );
     }
 
-
     public function register(RegisterRequest $request)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $data = $request->validated();
+            $data = $request->validated();
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'member',
-        ]);
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => 'member',
+            ]);
 
-        $member = Member::create([
-            'user_id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-        ]);
+            $member = Member::create([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
 
-        DB::commit();
+            DB::commit();
 
-        return $this->success(
-            [
-                'user' => $user,
-                'member' => $member,
-            ],
-            'Member registered successfully.',
-            201
-        );
+            return $this->success(
+                [
+                    'user' => $user,
+                    'member' => $member,
+                ],
+                'Member registered successfully.',
+                201
+            );
 
-    } catch (\Throwable $e) {
+        } catch (\Throwable $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        \Log::error('Member registration failed.', [
-            'message' => $e->getMessage(),
-        ]);
+            \Log::error('Member registration failed.', [
+                'message' => $e->getMessage(),
+            ]);
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 }

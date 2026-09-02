@@ -9,17 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up(): void
-{
-    Schema::table('borrowings', function (Blueprint $table) {
-        $table->dateTime('due_date')->nullable()->after('borrowed_at');
-    });
-}
+    public function up(): void
+    {
+        Schema::table('borrowings', function (Blueprint $table) {
+            $table->dateTime('due_date')->nullable()->after('borrowed_at');
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('borrowings', function (Blueprint $table) {
-        $table->dropColumn('due_date');
-    });
-}
+    public function down(): void
+    {
+        Schema::table('borrowings', function (Blueprint $table) {
+            $table->dropColumn('due_date');
+        });
+    }
 };

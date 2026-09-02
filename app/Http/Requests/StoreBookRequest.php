@@ -17,7 +17,7 @@ class StoreBookRequest extends FormRequest
             'title' => 'required|max:255',
             'author' => 'required|max:255',
             'category' => 'required|max:255',
-            'publish_year' => 'required|integer|min:1800|max:' . date('Y'),
+            'publish_year' => 'required|integer|min:1800|max:'.date('Y'),
         ];
     }
 }

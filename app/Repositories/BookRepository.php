@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\Book;
 use App\Interfaces\BookRepositoryInterface;
+use App\Models\Book;
 
 class BookRepository implements BookRepositoryInterface
 {
@@ -11,19 +11,19 @@ class BookRepository implements BookRepositoryInterface
     {
         $books = Book::query();
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $books->where(function ($query) use ($filters) {
-                $query->where('title', 'like', '%' . $filters['search'] . '%')
-                      ->orWhere('author', 'like', '%' . $filters['search'] . '%')
-                      ->orWhere('category', 'like', '%' . $filters['search'] . '%');
+                $query->where('title', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('author', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('category', 'like', '%'.$filters['search'].'%');
             });
         }
 
-        if (!empty($filters['category'])) {
+        if (! empty($filters['category'])) {
             $books->where('category', $filters['category']);
         }
 
-        if (!empty($filters['order_by'])) {
+        if (! empty($filters['order_by'])) {
             $allowedColumns = [
                 'title',
                 'author',
@@ -34,7 +34,7 @@ class BookRepository implements BookRepositoryInterface
             if (in_array($filters['order_by'], $allowedColumns)) {
                 $direction = $filters['direction'] ?? 'asc';
 
-                if (!in_array($direction, ['asc', 'desc'])) {
+                if (! in_array($direction, ['asc', 'desc'])) {
                     $direction = 'asc';
                 }
 

@@ -14,8 +14,7 @@ class AiController extends Controller
 
     public function __construct(
         protected LibraryAgentService $agent
-    ) {
-    }
+    ) {}
 
     public function chat(AiChatRequest $request)
     {

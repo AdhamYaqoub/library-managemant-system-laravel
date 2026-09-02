@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class OllamaService
 {
     protected string $url;
+
     protected string $model;
+
     protected int $timeout;
 
     public function __construct()
@@ -20,22 +22,22 @@ class OllamaService
 
     public function chat(array $messages, bool $json = false): array
     {
-       $payload = [
-    'model' => $this->model,
-    'messages' => $messages,
-    'stream' => false,
-    'think' => false,
-    'options' => [
-    'num_predict' => 256,
-],
-];
+        $payload = [
+            'model' => $this->model,
+            'messages' => $messages,
+            'stream' => false,
+            'think' => false,
+            'options' => [
+                'num_predict' => 256,
+            ],
+        ];
 
         if ($json) {
             $payload['format'] = 'json';
         }
 
         Log::info('OLLAMA REQUEST', [
-            'url' => $this->url . '/api/chat',
+            'url' => $this->url.'/api/chat',
             'model' => $this->model,
             'payload' => $payload,
             'json_payload' => json_encode(
@@ -49,7 +51,7 @@ class OllamaService
             ->acceptJson()
             ->asJson()
             ->post(
-                $this->url . '/api/chat',
+                $this->url.'/api/chat',
                 $payload
             );
 

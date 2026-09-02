@@ -10,16 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('books', function (Blueprint $table) {
-        $table->softDeletes();
-    });
-}
+    {
+        Schema::table('books', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('books', function (Blueprint $table) {
-        $table->dropSoftDeletes();
-    });
-}
+    public function down(): void
+    {
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+    }
 };

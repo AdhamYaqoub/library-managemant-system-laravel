@@ -14,8 +14,7 @@ class GetBookTool
             'function' => [
                 'name' => 'get_book',
 
-                'description' =>
-                    'Get detailed information about a book using its ID.',
+                'description' => 'Get detailed information about a book using its ID.',
 
                 'parameters' => [
                     'type' => 'object',
