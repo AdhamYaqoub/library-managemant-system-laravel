@@ -24,14 +24,16 @@ class BorrowingController extends Controller
     }
 
     public function index(Request $request)
-    {
-        $borrowings = $this->borrowingService->getAll($request);
+{
+    $borrowings = $this->borrowingService->getAll(
+        $request->query()
+    );
 
-        return $this->success(
-            BorrowingResource::collection($borrowings),
-            'Borrowings retrieved successfully.'
-        );
-    }
+    return $this->success(
+        BorrowingResource::collection($borrowings),
+        'Borrowings retrieved successfully.'
+    );
+}
 
     public function show($id)
     {
