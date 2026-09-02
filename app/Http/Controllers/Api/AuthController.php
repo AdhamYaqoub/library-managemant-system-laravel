@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 
 class AuthController extends Controller
 {
@@ -90,4 +93,50 @@ class AuthController extends Controller
             throw $e;
         }
     }
+
+    public function forgotPassword(ForgotPasswordRequest $request)
+{
+    $status = Password::sendResetLink(
+        $request->validated()
+    );
+
+    if ($status !== Password::RESET_LINK_SENT) {
+        return $this->error(
+            __($status),
+            422
+        );
+    }
+
+    return $this->success(
+        null,
+        'Password reset link sent successfully.'
+    );
+}
+
+public function resetPassword(ResetPasswordRequest $request)
+{
+    $status = Password::reset(
+        $request->validated(),
+        function ($user, $password) {
+
+            $user->forceFill([
+                'password' => Hash::make($password),
+            ])->save();
+
+            $user->tokens()->delete();
+        }
+    );
+
+    if ($status !== Password::PASSWORD_RESET) {
+        return $this->error(
+            __($status),
+            422
+        );
+    }
+
+    return $this->success(
+        null,
+        'Password reset successfully.'
+    );
+}
 }
