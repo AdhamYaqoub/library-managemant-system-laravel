@@ -22,7 +22,6 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:members,email',
         ];
