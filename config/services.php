@@ -37,4 +37,9 @@ return [
         'timeout' => env('OLLAMA_TIMEOUT', 120),
     ],
 
+    'resend' => [
+        'key' => env('RESEND_API_KEY'),
+    ],
+
+
 ];
