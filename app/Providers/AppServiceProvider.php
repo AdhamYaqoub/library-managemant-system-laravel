@@ -11,9 +11,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $this->app->bind(
@@ -25,19 +22,14 @@ class AppServiceProvider extends ServiceProvider
             BorrowingRepositoryInterface::class,
             BorrowingRepository::class
         );
-        //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-         ResetPassword::createUrlUsing(function ($user, string $token) {
-        return url('/api/reset-password')
-            . '?token=' . $token
-            . '&email=' . urlencode($user->email);
-    });
-        //
+        ResetPassword::createUrlUsing(function ($user, string $token) {
+            return url('/api/reset-password')
+                . '?token=' . $token
+                . '&email=' . urlencode($user->email);
+        });
     }
 }
